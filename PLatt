@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Cell {
+  struct Cell *anterior;
+  struct Cell *proximo;
+  char valor;
+} Cell;
+
+typedef struct {
+  Cell *top;
+  int qtde;
+} Stack;
+
+Cell *start_cell(char valor) {
+  Cell *nova = malloc(sizeof(Cell));
+  nova->anterior = NULL;
+  nova->proximo = NULL;
+  nova->valor = valor;
+  return nova;
+}
+
+Stack *start_stack() {
+  Stack *stack = malloc(sizeof(Stack));
+  stack->qtde = 0;
+  stack->top = NULL;
+  return stack;
+}
+
+void push(Stack *stack, char valor) {
+  Cell *nova = start_cell(valor);
+  if (stack->qtde != 0) {
+    nova->proximo = stack->top;
+    stack->top->anterior = nova;
+  }
+  stack->top = nova;
+  stack->qtde++;
+}
+
+char pop(Stack *stack) {
+  if (stack->qtde > 0) {
+    char valor = stack->top->valor;
+    Cell *top = stack->top;
+    stack->top = stack->top->proximo;
+    if (stack->top != NULL)
+      stack->top->anterior = NULL;
+    stack->qtde--;
+    free(top);
+    return valor;
+  } else {
+    return 'x';
+  }
+}
+
+int main(void) {
+    Stack *stack = start_stack();
+    int contadorParenteses = 0;
+    int contadorChaves = 0;
+    int contadorColchetes = 0;
+    int flag = 1;
+  
+    char expr[100];
+    fgets(expr, sizeof(expr), stdin);
+
+    for (int i = 0;expr[i] != '\0';i++){
+        if (expr[i] == '(' || expr[i] == '[' || expr[i] == '{'){
+            push(stack,expr[i]);
+
+            if (expr[i] == '('){
+                contadorParenteses++;
+            }else if (expr[i] == '['){
+                contadorColchetes++;
+            }else if (expr[i] == '{'){
+                contadorChaves++;
+            }
+
+        }
+        if (expr[i] == ')' || expr[i] == ']' || expr[i] == '}'){
+            if (pop(stack) == 'x'){
+                flag = 0; 
+            } 
+            if(expr[i]==')'){
+                contadorParenteses--;
+            }else if (expr[i]==']' ){
+                if(contadorParenteses == 0){
+                    contadorColchetes--;
+                }else{
+                    flag = 0;
+                }
+            }else if(expr[i] == '}'){
+                if (contadorColchetes == 0){
+                    contadorChaves--;
+                }else{
+                    flag = 0;
+                }
+            }
+        }
+    }
+    
+    if (contadorParenteses !=0 || contadorColchetes !=0 || contadorChaves != 0){
+        flag = 0;
+    }
+
+    if(flag){
+        printf("correto");
+    }else{
+        printf("incorreto");
+    }
+
+
+    return 0;
+}
