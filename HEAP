@@ -1,1 +1,3 @@
-
+// Atenção na hora de descobrir se o filho existe, pois a função de descobrir o filho sempre retorna um valor, logo será necessário adicionar um if que verifica se ele existe.
+// p = ⌊(i − 1)/2⌋ função piso que arredonda o número sempre pra baixo 1/2 = 0,5 logo a função irá redondar pra 0.
+// funções: filho esquerdo, filho direito, pai, último pai, peneirar (recupera a propriedade estrutural), função construir(transforma o array em heap)
