@@ -1,3 +1,141 @@
 // Atenção na hora de descobrir se o filho existe, pois a função de descobrir o filho sempre retorna um valor, logo será necessário adicionar um if que verifica se ele existe.
 // p = ⌊(i − 1)/2⌋ função piso que arredonda o número sempre pra baixo 1/2 = 0,5 logo a função irá redondar pra 0.
 // funções: filho esquerdo, filho direito, pai, último pai, peneirar (recupera a propriedade estrutural), função construir(transforma o array em heap)
+
+// CÓDIGO TOTALMENTE GERADO PELO DEEPSEEK
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define MAX_SIZE 100 // Tamanho máximo do heap
+
+// Estrutura do Heap
+typedef struct {
+    int data[MAX_SIZE];
+    int size;
+} Heap;
+
+// Função para obter o índice do filho esquerdo
+int left_child(int i) {
+    return 2 * i + 1;
+}
+
+// Função para obter o índice do filho direito
+int right_child(int i) {
+    return 2 * i + 2;
+}
+
+// Função para obter o índice do pai
+int parent(int i) {
+    return (i - 1) / 2;
+}
+
+// Função para obter o índice do último pai
+int last_parent(Heap *heap) {
+    return (heap->size / 2) - 1;
+}
+
+// Função para trocar dois elementos no heap
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Função peneirar (sift) - mantém a propriedade do heap
+void sift_down(Heap *heap, int i) {
+    int largest = i; // Inicializa o maior como raiz
+    int left = left_child(i);
+    int right = right_child(i);
+
+    // Verifica se o filho esquerdo é maior que a raiz
+    if (left < heap->size && heap->data[left] > heap->data[largest]) {
+        largest = left;
+    }
+
+    // Verifica se o filho direito é maior que o maior até agora
+    if (right < heap->size && heap->data[right] > heap->data[largest]) {
+        largest = right;
+    }
+
+    // Se o maior não é a raiz, troca e continua peneirando
+    if (largest != i) {
+        swap(&heap->data[i], &heap->data[largest]);
+        sift_down(heap, largest);
+    }
+}
+
+// Função para construir um heap a partir de um array
+void build_heap(Heap *heap) {
+    // Começa do último pai e vai até a raiz
+    for (int i = last_parent(heap); i >= 0; i--) {
+        sift_down(heap, i);
+    }
+}
+
+// Função para inserir um elemento no heap
+void insert(Heap *heap, int value) {
+    if (heap->size >= MAX_SIZE) {
+        printf("Heap cheio!\n");
+        return;
+    }
+    
+    // Adiciona o elemento no final
+    heap->data[heap->size] = value;
+    heap->size++;
+    
+    // Reconstroi o heap para manter a propriedade
+    build_heap(heap);
+}
+
+// Função para remover o elemento máximo (raiz) do heap
+int remove_max(Heap *heap) {
+    if (heap->size <= 0) {
+        printf("Heap vazio!\n");
+        return -1;
+    }
+    
+    // Troca a raiz com o último elemento
+    swap(&heap->data[0], &heap->data[heap->size - 1]);
+    heap->size--; // Remove o último elemento (que era a raiz)
+    
+    // Reconstroi o heap para manter a propriedade
+    build_heap(heap);
+    
+    return heap->data[heap->size]; // Retorna o elemento removido
+}
+
+// Função para imprimir o heap
+void print_heap(Heap *heap) {
+    printf("Heap: ");
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->data[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    Heap heap;
+    heap.size = 0;
+    
+    // Inserção de elementos no heap
+    insert(&heap, 7);
+    insert(&heap, 10);
+    insert(&heap, 9);
+    insert(&heap, 15);
+    insert(&heap, 13);
+    insert(&heap, 5);
+    insert(&heap, 8);
+    insert(&heap, 16);
+    
+    print_heap(&heap);
+    
+    // Remoção do elemento máximo
+    printf("Removido: %d\n", remove_max(&heap));
+    print_heap(&heap);
+    
+    printf("Removido: %d\n", remove_max(&heap));
+    print_heap(&heap);
+    
+    return 0;
+}
