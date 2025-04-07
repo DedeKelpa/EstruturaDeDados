@@ -2,7 +2,7 @@
 // p = ⌊(i − 1)/2⌋ função piso que arredonda o número sempre pra baixo 1/2 = 0,5 logo a função irá redondar pra 0.
 // funções: filho esquerdo, filho direito, pai, último pai, peneirar (recupera a propriedade estrutural), função construir(transforma o array em heap)
 
-// CÓDIGO TOTALMENTE GERADO PELO DEEPSEEK
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
