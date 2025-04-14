@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura do nó da lista encadeada
+typedef struct Node {
+    int valor;
+    struct Node* proximo;
+} Node;
+
+// Tamanho da tabela hash (pode ser ajustado conforme necessidade)
+#define TAMANHO_TABELA 10
+
+// Função hash usando o método da divisão
+int funcao_hash(int chave) {
+    return chave % TAMANHO_TABELA;
+}
+
+// Função para criar um novo nó
+Node* criar_no(int valor) {
+    Node* novo = (Node*)malloc(sizeof(Node));
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+// Inserção com encadeamento externo
+void inserir(Node* tabela[], int valor) {
+    int indice = funcao_hash(valor);
+    Node* novo = criar_no(valor);
+
+    // Insere o novo nó no início da lista (mais eficiente)
+    novo->proximo = tabela[indice];
+    tabela[indice] = novo;
+}
+
+// Remoção de um valor da tabela hash
+void remover(Node* tabela[], int valor) {
+    int indice = funcao_hash(valor);
+    Node* atual = tabela[indice];
+    Node* anterior = NULL;
+
+    while (atual != NULL) {
+        if (atual->valor == valor) {
+            if (anterior == NULL) {
+                tabela[indice] = atual->proximo;
+            } else {
+                anterior->proximo = atual->proximo;
+            }
+            free(atual);
+            printf("Valor %d removido com sucesso.\n", valor);
+            return;
+        }
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    printf("Valor %d não encontrado.\n", valor);
+}
+
+// Impressão da tabela hash
+void imprimir_tabela(Node* tabela[]) {
+    for (int i = 0; i < TAMANHO_TABELA; i++) {
+        printf("Indice %d: ", i);
+        Node* atual = tabela[i];
+        while (atual != NULL) {
+            printf("%d -> ", atual->valor);
+            atual = atual->proximo;
+        }
+        printf("NULL\n");
+    }
+}
+
+// Liberação da memória alocada
+void liberar_tabela(Node* tabela[]) {
+    for (int i = 0; i < TAMANHO_TABELA; i++) {
+        Node* atual = tabela[i];
+        while (atual != NULL) {
+            Node* temp = atual;
+            atual = atual->proximo;
+            free(temp);
+        }
+    }
+}
+
+int main() {
+    // Criação da tabela hash com listas encadeadas vazias
+    Node* tabela[TAMANHO_TABELA] = {NULL};
+
+    // Inserindo valores
+    int valores[] = {190, 322, 172, 89, 13, 4, 769, 61, 15, 76, 97, 28, 80, 76, 88};
+    int n = sizeof(valores) / sizeof(valores[0]);
+    for (int i = 0; i < n; i++) {
+        inserir(tabela, valores[i]);
+    }
+
+    // Imprimindo a tabela
+    printf("Tabela Hash:\n");
+    imprimir_tabela(tabela);
+
+    // Removendo alguns valores
+    remover(tabela, 76);
+    remover(tabela, 322);
+
+    // Imprimindo após remoções
+    printf("\nTabela após remoções:\n");
+    imprimir_tabela(tabela);
+
+    // Liberando memória
+    liberar_tabela(tabela);
+    return 0;
+}
