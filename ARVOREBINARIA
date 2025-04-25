@@ -1,0 +1,13 @@
+
+// FUNÇÃO PARA IMPRESSÃO DE UMA ÁRVORE BINÁRIA EM ORDEM
+void in_ordem(raiz){
+  if (raiz == NULL){
+    return;
+    }
+  in_ordem(raiz->esq);
+  printf("%d",raiz->valor);
+  in_ordem(raiz->dir);
+
+  // INSERÇÃO
+
+  
