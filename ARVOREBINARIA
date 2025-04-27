@@ -1,13 +1,109 @@
+// Definição da estrutura de um nó da árvore binária
+typedef struct No {
+    int valor;
+    struct No *esq, *dir;
+} No;
 
-// FUNÇÃO PARA IMPRESSÃO DE UMA ÁRVORE BINÁRIA EM ORDEM
-void in_ordem(raiz){
-  if (raiz == NULL){
-    return;
+#include <stdio.h>
+#include <stdlib.h>
+
+// ---------------------------- Funções de Travessia ----------------------------
+
+// Função para percorrer a árvore EM ORDEM: esquerda, nó, direita
+void in_ordem(No *raiz) {
+    if (raiz == NULL) {         // Se a árvore estiver vazia, não faz nada.
+        return;
     }
-  in_ordem(raiz->esq);
-  printf("%d",raiz->valor);
-  in_ordem(raiz->dir);
+    in_ordem(raiz->esq);        // Percorre recursivamente o filho esquerdo.
+    printf("%d ", raiz->valor); // Imprime o valor do nó atual.
+    in_ordem(raiz->dir);        // Percorre recursivamente o filho direito.
+}
 
-  // INSERÇÃO
+// Função para percorrer a árvore EM PRÉ-ORDEM: nó, esquerda, direita
+void pre_ordem(No *raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+    printf("%d ", raiz->valor); // Primeiro imprime o nó atual.
+    pre_ordem(raiz->esq);       // Depois percorre o filho esquerdo.
+    pre_ordem(raiz->dir);       // Depois percorre o filho direito.
+}
 
-  
+// Função para percorrer a árvore EM PÓS-ORDEM: esquerda, direita, nó
+void pos_ordem(No *raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+    pos_ordem(raiz->esq);       // Primeiro percorre o filho esquerdo.
+    pos_ordem(raiz->dir);       // Depois percorre o filho direito.
+    printf("%d ", raiz->valor); // Por fim, imprime o nó atual.
+}
+
+// ---------------------------- Funções de Inserção ----------------------------
+
+// Função para inserir um novo valor na árvore
+No* inserir(No *raiz, int valor) {
+    if (raiz == NULL) {                     // Se a árvore está vazia ou chegamos numa folha, cria um novo nó.
+        No *novo = (No *)malloc(sizeof(No));
+        novo->valor = valor;
+        novo->esq = NULL;
+        novo->dir = NULL;
+        return novo;                        // Retorna o novo nó criado.
+    }
+
+    if (valor < raiz->valor) {              // Se o valor for menor que o nó atual, insere à esquerda.
+        raiz->esq = inserir(raiz->esq, valor);
+    } else {                                // Se o valor for maior ou igual, insere à direita.
+        raiz->dir = inserir(raiz->dir, valor);
+    }
+
+    return raiz;                            // Retorna a própria raiz sem alteração.
+}
+
+// ---------------------------- Funções de Remoção ----------------------------
+
+// Função auxiliar para encontrar o nó mais à direita de uma subárvore esquerda
+No* maior_valor(No *raiz) {
+    while (raiz->dir != NULL) {  // Vai caminhando para a direita até encontrar o maior valor.
+        raiz = raiz->dir;
+    }
+    return raiz;                // Retorna o nó com o maior valor.
+}
+
+// Função para remover um valor da árvore
+No* remover(No *raiz, int valor) {
+    if (raiz == NULL) {          // Se não encontrou o valor, retorna NULL.
+        return NULL;
+    }
+
+    if (valor < raiz->valor) {   // Se o valor for menor, procura na esquerda.
+        raiz->esq = remover(raiz->esq, valor);
+    } else if (valor > raiz->valor) { // Se for maior, procura na direita.
+        raiz->dir = remover(raiz->dir, valor);
+    } else { // Se achou o nó a ser removido
+
+        if (raiz->esq == NULL && raiz->dir == NULL) { // Caso 1: é uma folha
+            free(raiz);
+            return NULL;
+        }
+
+        if (raiz->esq == NULL) { // Caso 2: só tem filho à direita
+            No *temp = raiz->dir;
+            free(raiz);
+            return temp;
+        }
+
+        if (raiz->dir == NULL) { // Caso 2: só tem filho à esquerda
+            No *temp = raiz->esq;
+            free(raiz);
+            return temp;
+        }
+
+        // Caso 3: tem dois filhos
+        No *temp = maior_valor(raiz->esq); // Encontra o maior valor na subárvore esquerda
+        raiz->valor = temp->valor;         // Copia o valor para o nó atual
+        raiz->esq = remover(raiz->esq, temp->valor); // Remove o nó duplicado
+    }
+
+    return raiz; // Retorna a raiz atualizada
+}
