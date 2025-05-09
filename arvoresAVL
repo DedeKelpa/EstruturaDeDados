@@ -1,0 +1,19 @@
+// FUNÇÕES PARA CHECAGEM DO VALOR MAX, DA ALTURA E DO FATOR DE BALENCEAMENTO DE CADA VÉRTICE
+
+ int MAX(int x, int y) {
+ if(x >= y)
+ return x;
+ else
+ return y;
+ }
+
+ int altura(Vertice *x) {
+ if (x == NULL) {
+ return -1;
+ }
+ return MAX(altura(x->esq), altura(x->dir)) + 1;
+ }
+
+ int fatorBalanceamento(Vertice *x) {
+ return altura(x->dir) - altura(x->esq);
+ }
